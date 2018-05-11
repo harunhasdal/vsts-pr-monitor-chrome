@@ -26,6 +26,8 @@ zipFolder(folder, zipName, function(err) {
 function uploadZip() {
   let cmd = getUploadCommand();
   exec(cmd, (error, stdout, stderr) => {
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
     if (error !== null) {
       console.log(`Exec error: ${error}`);
     } else {
@@ -38,8 +40,10 @@ function uploadZip() {
 function publishExtension() {
   let cmd = getPublishCommand();
   exec(cmd, (error, stdout, stderr) => {
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
     if (error !== null) {
-      console.log(`exec error: ${error}`);
+      console.log(`Exec error: ${error}`);
     } else {
       console.log("Successfully published the newer version");
     }
