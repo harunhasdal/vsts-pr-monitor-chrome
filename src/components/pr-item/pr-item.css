@@ -1,0 +1,27 @@
+.pr-item {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.pr-item-link {
+  text-decoration: none;
+  color: black;
+}
+
+.pr-item-link:hover {
+  text-decoration: underline;
+}
+
+.pr-item-repositoryName {
+  font-size: 0.7rem;
+}
+
+.pr-item-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: blue;
+}
+
+.pr-item-metadata {
+  font-size: 0.7rem;
+}

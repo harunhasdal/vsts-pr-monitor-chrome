@@ -1,0 +1,20 @@
+{
+  "short_name": "PR",
+  "name": "PR Monitor",
+  "version": "0.1",
+  "description": "VSTS Pull Request Monitor",
+  "icons": {
+    "48": "pr-monitor-48x48.png",
+    "128": "pr-monitor-128x128.png"
+  },
+  "author": "Harun Hasdal",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "permissions": ["cookies", "*://*.visualstudio.com/", "storage", "alarms"]
+}

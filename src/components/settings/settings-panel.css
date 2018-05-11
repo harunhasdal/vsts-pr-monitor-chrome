@@ -1,0 +1,23 @@
+.settings-panel {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.settings-panel-input-container {
+  padding: 20px;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.settings-panel-input-container > label {
+  min-width: 140px;
+}
+
+.settings-panel-controls {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.settings-panel-controls > button {
+  min-width: 120px;
+}
