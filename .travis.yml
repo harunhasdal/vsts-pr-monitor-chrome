@@ -7,9 +7,11 @@ cache:
 script:
   - npm install
   - npm test
-  - npm run build
 deploy:
   provider: script
-  script: CLIENT_ID=${CLIENT_ID} CLIENT_SECRET=${CLIENT_SECRET} EXTENSION_ID=${EXTENSION_ID} REFRESH_TOKEN=${REFRESH_TOKEN} node release.js
+  script:
+    - npm install
+    - npm run build
+    - CLIENT_ID=${CLIENT_ID} CLIENT_SECRET=${CLIENT_SECRET} EXTENSION_ID=${EXTENSION_ID} REFRESH_TOKEN=${REFRESH_TOKEN} node release.js
   on:
     branch: master
