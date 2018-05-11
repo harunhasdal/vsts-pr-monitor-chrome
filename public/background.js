@@ -5,8 +5,9 @@ let settings;
 
 chrome.storage.local.get([settingsKey], function(result) {
   settings = result.settings;
-  console.log("Retrieved settings from storage" + settings);
-  fetchData(settings);
+  if (settings) {
+    fetchData(settings);
+  }
 });
 
 chrome.alarms.onAlarm.addListener(alarm => {

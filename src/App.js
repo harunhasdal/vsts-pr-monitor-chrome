@@ -18,7 +18,11 @@ class App extends Component {
   componentDidMount() {
     if (chrome && chrome.storage) {
       chrome.storage.local.get(["pullrequests", "settings"], result => {
-        this.setState({ prs: result.pullrequests, settings: result.settings });
+        const settings = result.settings
+          ? result.settings
+          : this.state.settings;
+        const prs = result.pullrequests ? result.pullrequests : this.state.prs;
+        this.setState({ prs, settings });
       });
       chrome.storage.onChanged.addListener((changes, namespace) => {
         const prChange = changes["pullrequests"];
