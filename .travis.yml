@@ -8,3 +8,8 @@ script:
   - npm install
   - npm test
   - npm run build
+deploy:
+  provider: script
+  script: node release.js
+  on:
+    branch: master
