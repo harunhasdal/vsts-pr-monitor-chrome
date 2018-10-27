@@ -17,7 +17,7 @@ it("renders PR list", () => {
       createdBy: {
         displayName: "Allen Iverson",
         imageUrl:
-          "https://testOrg.visualstudio.com/_api/_common/identityImage?id=f50c1460-aff7-46d7-a6d5-64f0a778e865"
+          "https://dev.azure.com/testOrg/_api/_common/identityImage?id=f50c1460-aff7-46d7-a6d5-64f0a778e865"
       },
       creationDate: "2018-05-11T10:41:42.535574Z",
       title: "Test Title 1"
@@ -34,7 +34,7 @@ it("renders PR list", () => {
       createdBy: {
         displayName: "Kevin Garnett",
         imageUrl:
-          "https://testOrg.visualstudio.com/_api/_common/identityImage?id=aa8ecfd8-e920-6c0e-ae07-46f9f3170bce"
+          "https://dev.azure.com/testOrg/_api/_common/identityImage?id=aa8ecfd8-e920-6c0e-ae07-46f9f3170bce"
       },
       creationDate: "2018-05-10T14:30:42.3139207Z",
       title: "Test title 2"

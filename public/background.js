@@ -30,7 +30,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 });
 
 const fetchData = settings => {
-  const url = `https://${settings.subdomain}.visualstudio.com/${
+  const url = `https://dev.azure.com/${settings.subdomain}/${
     settings.projectPath
   }/_apis/git/pullrequests?api-version=4.1`;
   console.log("PR Monitor fetching from ", url);

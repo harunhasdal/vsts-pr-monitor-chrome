@@ -70,7 +70,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <div className="App-title">VSTS Pull Requests</div>
+          <div className="App-title">Azure DevOps Pull Requests</div>
           <div className="App-title-controls">
             <p>{subtitle}</p>
             <p>

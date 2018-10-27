@@ -1,12 +1,12 @@
-# VSTS PullRequest Monitor
+# Azure DevOps PullRequest Monitor
 
-This is a chrome extension which would monitor all the repositories in a given VSTS project for active Pull Requests and lists them as links so that the developers can monitor what needs to be reviewed.
+This is a chrome extension which would monitor all the repositories in a given Azure DevOps project for active Pull Requests and lists them as links so that the developers can monitor what needs to be reviewed.
 
 ## Usage
 
-Click on SETTINGS link to configure the extension with your VSTS organisation and Project.
+Click on SETTINGS link to configure the extension with your Azure DevOps organisation and Project.
 
-Note that you'll need to have an active session with VSTS in order to retreive the list of pull requests.
+Note that you'll need to have an active session with Azure DevOps in order to retreive the list of pull requests.
 
 ## Development
 

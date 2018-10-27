@@ -24,9 +24,9 @@ class SettingsPanel extends Component {
       <div className="settings-panel">
         <form>
           <div className="settings-panel-input-container">
-            <label htmlFor="vsts-account-input">VSTS Account:</label>
+            <label htmlFor="azure-devops-account-input">Azure DevOps Account:</label>
             <input
-              id="vsts-account-input"
+              id="azure-devops-account-input"
               type="text"
               name="project"
               value={accountName}
@@ -34,12 +34,11 @@ class SettingsPanel extends Component {
               required
               minLength={3}
             />
-            .visualstudio.com
           </div>
           <div className="settings-panel-input-container">
-            <label htmlFor="vsts-project-input">VSTS Project:</label>
+            <label htmlFor="azure-devops-project-input">Azure DevOps Project:</label>
             <input
-              id="vsts-project-input"
+              id="azure-devops-project-input"
               type="text"
               name="project"
               value={projectName}
