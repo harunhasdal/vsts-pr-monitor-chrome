@@ -18,7 +18,7 @@ export const PRItem = props => {
       <a
         className="pr-item-link"
         target="_blank"
-        href={`https://${subdomain}.visualstudio.com/${projectPath}/_git/${repositoryName}/pullrequest/${pullRequestId}?_a=overview`}
+        href={`https://dev.azure.com/${subdomain}/${projectPath}/_git/${repositoryName}/pullrequest/${pullRequestId}?_a=overview`}
       >
         <div className="pr-item-link-body">
           <div className="pr-item-title">
