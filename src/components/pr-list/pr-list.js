@@ -2,14 +2,17 @@ import React from "react";
 import "./pr-list.css";
 import { PRItem } from "../pr-item/pr-item";
 
-export const PRList = ({ prs, subdomain, projectPath }) => {
+export const PRList = ({ prs, subdomain }) => {
   const sortedPrs = prs.sort((a, b) => a.repository.name > b.repository.name);
   return (
     <div className="pr-list">
       {sortedPrs.map(
         ({
           pullRequestId,
-          repository: { name: repositoryName },
+          repository: {
+            name: repositoryName,
+            project: { name: projectName }
+          },
           title,
           createdBy: { displayName: createdBy, imageUrl },
           status,
@@ -25,7 +28,7 @@ export const PRList = ({ prs, subdomain, projectPath }) => {
             status={status}
             creationDate={creationDate}
             subdomain={subdomain}
-            projectPath={projectPath}
+            projectName={projectName}
           />
         )
       )}

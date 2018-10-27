@@ -1,4 +1,3 @@
-console.log("background.js loaded");
 const prFetchAlarmName = "fetchPRs";
 const settingsKey = "settings";
 let settings;
@@ -21,7 +20,7 @@ chrome.alarms.create(prFetchAlarmName, {
   periodInMinutes: 1
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
+chrome.storage.onChanged.addListener(changes => {
   const settingsChange = changes[settingsKey];
   if (settingsChange) {
     settings = settingsChange.newValue;
@@ -29,23 +28,36 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 
+const getURL = subdomain => {
+  return `https://${subdomain}.visualstudio.com/_apis/git/pullrequests?api-version=4.1`;
+};
+
 const fetchData = settings => {
-  const url = `https://${settings.subdomain}.visualstudio.com/${
-    settings.projectPath
-  }/_apis/git/pullrequests?api-version=4.1`;
-  console.log("PR Monitor fetching from ", url);
+  if (!settings || !settings.subdomain) {
+    return;
+  }
+  const url = getURL(settings.subdomain);
+  const regex = settings.reposRegex
+    ? new RegExp(settings.reposRegex)
+    : new RegExp(".*");
+
+  console.log("PR Monitor fetching PRs from ", url);
   fetch(url, {
     credentials: "include",
     redirect: "follow"
   })
     .then(r => r.json())
     .then(d => {
-      console.log(d);
-      chrome.storage.local.set({ pullrequests: d.value }, () => {
+      console.log("Retreived", d.value);
+      return d.value;
+    })
+    .then(d => d.filter(pr => regex.test(pr.repository.name)))
+    .then(d => {
+      chrome.storage.local.set({ pullrequests: d }, () => {
         console.log("Pull requests saved to storage");
       });
       chrome.browserAction.setBadgeText({
-        text: String(d.value.length)
+        text: String(d.length)
       });
     })
     .catch(e => console.log(e));

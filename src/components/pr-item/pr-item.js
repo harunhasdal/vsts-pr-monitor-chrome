@@ -5,7 +5,7 @@ import { formatDistance } from "date-fns";
 export const PRItem = props => {
   const {
     subdomain,
-    projectPath,
+    projectName,
     pullRequestId,
     repositoryName,
     createdBy,
@@ -18,7 +18,7 @@ export const PRItem = props => {
       <a
         className="pr-item-link"
         target="_blank"
-        href={`https://${subdomain}.visualstudio.com/${projectPath}/_git/${repositoryName}/pullrequest/${pullRequestId}?_a=overview`}
+        href={`https://${subdomain}.visualstudio.com/${projectName}/_git/${repositoryName}/pullrequest/${pullRequestId}?_a=overview`}
       >
         <div className="pr-item-link-body">
           <div className="pr-item-title">

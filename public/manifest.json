@@ -1,8 +1,8 @@
 {
   "short_name": "PR",
   "name": "PR Monitor",
-  "version": "0.2",
-  "description": "VSTS Pull Request Monitor",
+  "version": "0.3",
+  "description": "Azure DevOps Pull Request Monitor",
   "icons": {
     "48": "pr-monitor-48x48.png",
     "128": "pr-monitor-128x128.png"

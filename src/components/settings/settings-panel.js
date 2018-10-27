@@ -2,33 +2,36 @@ import React, { Component } from "react";
 import "./settings-panel.css";
 
 class SettingsPanel extends Component {
-  constructor({ subdomain, projectPath, settingsUpdated }) {
+  constructor({ subdomain, reposRegex }) {
     super();
-    this.state = { accountName: subdomain, projectName: projectPath };
+    this.state = {
+      accountName: subdomain,
+      reposRegex: reposRegex
+    };
     this.handleAccountChange = this.handleAccountChange.bind(this);
-    this.handleProjectChange = this.handleProjectChange.bind(this);
+    this.handleReposRegexChange = this.handleReposRegexChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
   handleAccountChange(event) {
     this.setState({ accountName: event.target.value });
   }
-  handleProjectChange(event) {
-    this.setState({ projectName: event.target.value });
+  handleReposRegexChange(event) {
+    this.setState({ reposRegex: event.target.value });
   }
-  handleSave(event) {
-    this.props.settingsUpdated(this.state.accountName, this.state.projectName);
+  handleSave() {
+    this.props.settingsUpdated(this.state.accountName, this.state.reposRegex);
   }
   render() {
-    const { accountName, projectName } = this.state;
+    const { accountName, reposRegex } = this.state;
     return (
       <div className="settings-panel">
         <form>
           <div className="settings-panel-input-container">
-            <label htmlFor="vsts-account-input">VSTS Account:</label>
+            <label htmlFor="vsts-account-input">Account:</label>
             <input
               id="vsts-account-input"
               type="text"
-              name="project"
+              name="account"
               value={accountName}
               onChange={this.handleAccountChange}
               required
@@ -37,15 +40,16 @@ class SettingsPanel extends Component {
             .visualstudio.com
           </div>
           <div className="settings-panel-input-container">
-            <label htmlFor="vsts-project-input">VSTS Project:</label>
+            <label htmlFor="vsts-repos-input">Repos (regex):</label>
             <input
-              id="vsts-project-input"
+              id="vsts-repos-input"
               type="text"
-              name="project"
-              value={projectName}
-              onChange={this.handleProjectChange}
+              name="reposRegex"
+              value={reposRegex}
+              onChange={this.handleReposRegexChange}
               required
-              minLength={3}
+              minLength={2}
+              placeholder="example: .*docs.*"
             />
           </div>
           <div className="settings-panel-controls">

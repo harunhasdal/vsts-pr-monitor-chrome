@@ -9,7 +9,7 @@ class App extends Component {
     super();
     this.state = {
       prs: [],
-      settings: { subdomain: "", projectPath: "" },
+      settings: { subdomain: "", reposRegex: ".*" },
       ui: { showSettings: false }
     };
     this.toggleSettingsPanel = this.toggleSettingsPanel.bind(this);
@@ -24,7 +24,7 @@ class App extends Component {
         const prs = result.pullrequests ? result.pullrequests : this.state.prs;
         this.setState({ prs, settings });
       });
-      chrome.storage.onChanged.addListener((changes, namespace) => {
+      chrome.storage.onChanged.addListener(changes => {
         const prChange = changes["pullrequests"];
         if (prChange) {
           this.setState({ prs: prChange.newValue });
@@ -35,17 +35,25 @@ class App extends Component {
   toggleSettingsPanel() {
     this.setState({ ui: { showSettings: !this.state.ui.showSettings } });
   }
-  onSettingsChange(account, project) {
-    const stillShowSettings = account === "" || project === "";
+  onSettingsChange(account, reposRegex) {
+    const stillShowSettings = account === "" || reposRegex === "";
     this.setState(
       {
-        settings: { subdomain: account, projectPath: project },
+        settings: {
+          subdomain: account,
+          reposRegex: reposRegex
+        },
         ui: { showSettings: stillShowSettings }
       },
       () => {
         if (chrome && chrome.storage) {
           chrome.storage.local.set(
-            { settings: { subdomain: account, projectPath: project } },
+            {
+              settings: {
+                subdomain: account,
+                reposRegex: reposRegex
+              }
+            },
             () => {
               console.log("PR Monitor settings saved");
             }
@@ -57,20 +65,21 @@ class App extends Component {
   render() {
     const {
       prs,
-      settings: { subdomain, projectPath },
+      settings: { subdomain, reposRegex },
       ui: { showSettings }
     } = this.state;
     const subtitle = showSettings
       ? `Edit settings`
-      : projectPath !== ""
-        ? `Currently displaying PRs in ${projectPath}`
-        : `Project not set`;
+      : subdomain !== ""
+        ? `Currently displaying PRs in ${subdomain}`
+        : `Account not set`;
     const settingsButtonLabel = showSettings ? `CANCEL` : `SETTINGS`;
-    const settingsConfigured = subdomain !== "" && projectPath !== "";
+    const settingsConfigured = subdomain !== "" && reposRegex !== "";
+
     return (
       <div className="App">
         <header className="App-header">
-          <div className="App-title">VSTS Pull Requests</div>
+          <div className="App-title">Pull Requests</div>
           <div className="App-title-controls">
             <p>{subtitle}</p>
             <p>
@@ -87,11 +96,11 @@ class App extends Component {
           {showSettings ? (
             <SettingsPanel
               subdomain={subdomain}
-              projectPath={projectPath}
+              reposRegex={reposRegex}
               settingsUpdated={this.onSettingsChange}
             />
           ) : settingsConfigured ? (
-            <PRList prs={prs} subdomain={subdomain} projectPath={projectPath} />
+            <PRList prs={prs} subdomain={subdomain} reposRegex={reposRegex} />
           ) : (
             <div className="App-no-settings">
               <p>
