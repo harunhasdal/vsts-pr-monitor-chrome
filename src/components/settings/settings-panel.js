@@ -1,59 +1,104 @@
-import React, { Component } from "react";
-import "./settings-panel.css";
+import { LitElement, html, css } from "lit-element";
 
-class SettingsPanel extends Component {
-  constructor({ subdomain, projectPath, settingsUpdated }) {
+export class SettingsPanel extends LitElement {
+  constructor() {
     super();
-    this.state = { accountName: subdomain, projectName: projectPath };
-    this.handleAccountChange = this.handleAccountChange.bind(this);
-    this.handleProjectChange = this.handleProjectChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
+    this.accountName = "";
+    this.projectName = "";
   }
-  handleAccountChange(event) {
-    this.setState({ accountName: event.target.value });
+
+  static get properties() {
+    return {
+      accountName: { type: String },
+      projectName: { type: String }
+    };
   }
-  handleProjectChange(event) {
-    this.setState({ projectName: event.target.value });
+
+  static get styles() {
+    return css`
+      .settings-panel {
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .settings-panel-input-container {
+        padding: 20px;
+        margin-bottom: 10px;
+        display: flex;
+      }
+
+      .settings-panel-input-container > label {
+        min-width: 190px;
+      }
+
+      .settings-panel-controls {
+        display: flex;
+        flex-direction: row-reverse;
+      }
+
+      .settings-panel-controls > button {
+        min-width: 120px;
+      }
+    `;
   }
-  handleSave(event) {
-    this.props.settingsUpdated(this.state.accountName, this.state.projectName);
-  }
+
   render() {
-    const { accountName, projectName } = this.state;
-    return (
-      <div className="settings-panel">
+    return html`
+      <div class="settings-panel">
         <form>
-          <div className="settings-panel-input-container">
-            <label htmlFor="azure-devops-account-input">Azure DevOps Account:</label>
+          <div class="settings-panel-input-container">
+            <label for="azure-devops-account-input">
+              Azure DevOps Account:
+            </label>
             <input
               id="azure-devops-account-input"
               type="text"
               name="project"
-              value={accountName}
-              onChange={this.handleAccountChange}
+              .value=${this.accountName}
+              @change=${this.handleAccountChange}
               required
-              minLength={3}
+              minlength="3"
             />
           </div>
-          <div className="settings-panel-input-container">
-            <label htmlFor="azure-devops-project-input">Azure DevOps Project:</label>
+          <div class="settings-panel-input-container">
+            <label for="azure-devops-project-input">
+              Azure DevOps Project:
+            </label>
             <input
               id="azure-devops-project-input"
               type="text"
               name="project"
-              value={projectName}
-              onChange={this.handleProjectChange}
+              .value=${this.projectName}
+              @change=${this.handleProjectChange}
               required
-              minLength={3}
+              minlength="3"
             />
           </div>
-          <div className="settings-panel-controls">
-            <button onClick={this.handleSave}>Save</button>
+          <div class="settings-panel-controls">
+            <button @click=${this.handleSave}>Save</button>
           </div>
         </form>
       </div>
-    );
+    `;
+  }
+  handleAccountChange(event) {
+    this.accountName = event.target.value;
+  }
+  handleProjectChange(event) {
+    this.projectName = event.target.value;
+  }
+
+  handleSave() {
+    const event = new CustomEvent("save", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        accountName: this.accountName,
+        projectName: this.projectName
+      }
+    });
+    this.dispatchEvent(event);
   }
 }
 
-export default SettingsPanel;
+customElements.define("x-settings-panel", SettingsPanel);
