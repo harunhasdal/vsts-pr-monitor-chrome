@@ -9,10 +9,8 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const CLIENT_ID = process.env.CLIENT_ID;
 
 execSync(`zip -j ${zipName} public/*`);
+console.log(`Zip file created as ${zipName}`);
 uploadZip();
-
-// to fetch it from node_modules
-const webstoreLocation = "./node_modules/.bin/webstore";
 
 function uploadZip() {
   let cmd = getUploadCommand();
@@ -41,10 +39,12 @@ function publishExtension() {
   });
 }
 
+const commandOptions = `--source ${zipName} --extension-id ${EXTENSION_ID} --client-id ${CLIENT_ID} --client-secret ${CLIENT_SECRET} --refresh-token ${REFRESH_TOKEN}`;
+
 function getUploadCommand() {
-  return `${webstoreLocation} upload --source ${zipName} --extension-id ${EXTENSION_ID} --client-id ${CLIENT_ID} --client-secret ${CLIENT_SECRET} --refresh-token ${REFRESH_TOKEN}`;
+  return `./node_modules/.bin/webstore upload ${commandOptions}`;
 }
 
 function getPublishCommand() {
-  return `${webstoreLocation} publish --extension-id ${EXTENSION_ID} --client-id ${CLIENT_ID} --client-secret ${CLIENT_SECRET} --refresh-token ${REFRESH_TOKEN}`;
+  return `./node_modules/.bin/webstore publish ${commandOptions}`;
 }
