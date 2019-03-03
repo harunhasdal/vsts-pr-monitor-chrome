@@ -54,8 +54,8 @@ export class PRMonitorApp extends LitElement {
     if (chrome && chrome.storage) {
       chrome.storage.local.get(["pullrequests", "settings"], result => {
         if (result.settings) {
-          this.accountName = settings.subdomain;
-          this.projectName = settings.projectPath;
+          this.accountName = result.settings.subdomain;
+          this.projectName = result.settings.projectPath;
         }
         if (result.pullrequests) {
           this.prs = result.pullrequests;
