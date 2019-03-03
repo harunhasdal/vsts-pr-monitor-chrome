@@ -1,5 +1,7 @@
 # Azure DevOps PullRequest Monitor
 
+[![Build Status](https://travis-ci.org/harunhasdal/vsts-pr-monitor-chrome.svg?branch=master)](https://travis-ci.org/harunhasdal/vsts-pr-monitor-chrome)
+
 This is a chrome extension which would monitor all the repositories in a given Azure DevOps project for active Pull Requests and lists them as links so that the developers can monitor what needs to be reviewed.
 
 ## Usage
