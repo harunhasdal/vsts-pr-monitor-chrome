@@ -8,6 +8,9 @@
 
 # production
 /build
+/public/index.js
+/public/sample.json
+/pr-monitor-chrome.zip
 
 # misc
 .DS_Store

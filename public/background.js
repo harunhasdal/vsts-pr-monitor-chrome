@@ -1,9 +1,8 @@
-console.log("background.js loaded");
 const prFetchAlarmName = "fetchPRs";
 const settingsKey = "settings";
 let settings;
 
-chrome.storage.local.get([settingsKey], function(result) {
+chrome.storage.local.get([settingsKey], result => {
   settings = result.settings;
   if (settings) {
     fetchData(settings);
@@ -21,7 +20,7 @@ chrome.alarms.create(prFetchAlarmName, {
   periodInMinutes: 1
 });
 
-chrome.storage.onChanged.addListener((changes, namespace) => {
+chrome.storage.onChanged.addListener(changes => {
   const settingsChange = changes[settingsKey];
   if (settingsChange) {
     settings = settingsChange.newValue;
@@ -40,7 +39,6 @@ const fetchData = settings => {
   })
     .then(r => r.json())
     .then(d => {
-      console.log(d);
       chrome.storage.local.set({ pullrequests: d.value }, () => {
         console.log("Pull requests saved to storage");
       });

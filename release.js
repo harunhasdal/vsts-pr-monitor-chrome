@@ -1,27 +1,18 @@
-const zipFolder = require("zip-folder");
 const exec = require("child_process").exec;
+const execSync = require("child_process").execSync;
 
-const folder = "build";
-const zipName = "pr-monitor.zip";
+const zipName = "pr-monitor-chrome.zip";
 
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const EXTENSION_ID = process.env.EXTENSION_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const CLIENT_ID = process.env.CLIENT_ID;
 
+execSync(`zip -j ${zipName} public/*`);
+uploadZip();
+
 // to fetch it from node_modules
 const webstoreLocation = "./node_modules/.bin/webstore";
-
-zipFolder(folder, zipName, function(err) {
-  if (err) {
-    console.log("Error while creating the archive file!", err);
-  } else {
-    console.log(
-      `Successfully created archive of ${folder} and saved as ${zipName}`
-    );
-    uploadZip(); // on successful zipping, call upload
-  }
-});
 
 function uploadZip() {
   let cmd = getUploadCommand();
