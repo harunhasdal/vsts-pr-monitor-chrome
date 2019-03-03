@@ -3,6 +3,8 @@ const settingsKey = "settings";
 let settings;
 
 chrome.storage.local.get([settingsKey], result => {
+  if (!result) return;
+
   settings = result.settings;
   if (settings) {
     fetchData(settings);

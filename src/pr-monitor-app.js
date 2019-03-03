@@ -84,7 +84,12 @@ export class PRMonitorApp extends LitElement {
     this.requestUpdate();
     if (chrome && chrome.storage) {
       chrome.storage.local.set(
-        { settings: { subdomain: account, projectPath: project } },
+        {
+          settings: {
+            subdomain: event.detail.accountName,
+            projectPath: event.detail.projectName
+          }
+        },
         () => {
           console.log("PR Monitor settings saved");
         }
