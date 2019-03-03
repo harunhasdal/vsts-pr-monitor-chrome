@@ -1,4 +1,5 @@
 const execSync = require("child_process").execSync;
+const fs = require("fs");
 
 const zipName = "pr-monitor-chrome.zip";
 
