@@ -1,50 +1,38 @@
-const exec = require("child_process").exec;
 const execSync = require("child_process").execSync;
 
 const zipName = "pr-monitor-chrome.zip";
+
+execSync(`zip -j ${zipName} public/*`);
+console.log(`Successfully created ${zipName}`);
 
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const EXTENSION_ID = process.env.EXTENSION_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const CLIENT_ID = process.env.CLIENT_ID;
+const webStore = require("chrome-webstore-upload")({
+  extensionId: EXTENSION_ID,
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  refreshToken: REFRESH_TOKEN
+});
 
-execSync(`zip -j ${zipName} public/*`);
-console.log(`Zip file created as ${zipName}`);
-uploadZip();
+const extensionSource = fs.createReadStream(`./${zipName}`);
+webStore
+  .uploadExisting(extensionSource)
+  .then(res => {
+    console.log("Successfully uploaded the ZIP");
 
-function uploadZip() {
-  let cmd = getUploadCommand();
-  exec(cmd, (error, stdout, stderr) => {
-    console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
-    if (error !== null) {
-      console.log(`Exec error: ${error}`);
-    } else {
-      console.log("Successfully Uploaded the zip to chrome web store");
-      publishExtension(); // on successful upload, call publish
-    }
+    webStore
+      .publish()
+      .then(res => {
+        console.log("Successfully published the newer version");
+      })
+      .catch(error => {
+        console.log(`Error while publishing uploaded extension: ${error}`);
+        process.exit(1);
+      });
+  })
+  .catch(error => {
+    console.log(`Error while uploading ZIP: ${error}`);
+    process.exit(1);
   });
-}
-
-function publishExtension() {
-  let cmd = getPublishCommand();
-  exec(cmd, (error, stdout, stderr) => {
-    console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
-    if (error !== null) {
-      console.log(`Exec error: ${error}`);
-    } else {
-      console.log("Successfully published the newer version");
-    }
-  });
-}
-
-const commandOptions = `--source ${zipName} --extension-id ${EXTENSION_ID} --client-id ${CLIENT_ID} --client-secret ${CLIENT_SECRET} --refresh-token ${REFRESH_TOKEN}`;
-
-function getUploadCommand() {
-  return `./node_modules/.bin/webstore upload ${commandOptions}`;
-}
-
-function getPublishCommand() {
-  return `./node_modules/.bin/webstore publish ${commandOptions}`;
-}
