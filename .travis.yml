@@ -3,15 +3,14 @@ node_js:
   - "stable"
 cache:
   directories:
-  - node_modules
+    - node_modules
 script:
   - npm install
-  - npm test
+  - npm run build
 deploy:
   skip_cleanup: true
   provider: script
   script:
-    - npm run build
     - CLIENT_ID=${CLIENT_ID} CLIENT_SECRET=${CLIENT_SECRET} EXTENSION_ID=${EXTENSION_ID} REFRESH_TOKEN=${REFRESH_TOKEN} node release.js
   on:
     branch: master
