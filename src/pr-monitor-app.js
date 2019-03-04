@@ -10,8 +10,11 @@ export class PRMonitorApp extends LitElement {
     // https://docs.microsoft.com/en-us/rest/api/azure/devops/git/pull%20requests/get%20pull%20requests?view=azure-devops-rest-5.0#gitpullrequest
     /** @type {Array.<{codeReviewId: number, createdBy: {displayName: string, imageURL: string}, creationDate: string, description: string, isDraft: boolean, mergeStatus?: string, pullRequestId: number, repository: {name: string, project: {name: string}}, reviewers: Array.<{displayName: string, imageUrl: string, vote:number}>, status: string, title: string, lastMergeCommit?: {url: string} }>} */
     this.prs = [];
-    this.accountName = "";
-    this.projectName = "";
+    this.settings = {
+      accountName: "",
+      projectRegex: ".*",
+      repoRegex: ".*"
+    };
     this.showSettings = false;
 
     this.toggleSettingsPanel = this.toggleSettingsPanel.bind(this);
@@ -24,6 +27,11 @@ export class PRMonitorApp extends LitElement {
         padding: 10px 20px;
         color: white;
         position: static;
+        height: 50px;
+      }
+      .App-intro {
+        overflow-y: auto;
+        height: calc(100vh - 70px);
       }
 
       .App-title {
@@ -55,15 +63,14 @@ export class PRMonitorApp extends LitElement {
     if (chrome && chrome.storage) {
       chrome.storage.local.get(["pullrequests", "settings"], result => {
         if (result.settings) {
-          this.accountName = result.settings.accountName;
-          this.projectName = result.settings.projectPath;
+          this.settings = result.settings;
         }
         if (result.pullrequests) {
           this.prs = result.pullrequests;
         }
         this.requestUpdate();
       });
-      chrome.storage.onChanged.addListener((changes, namespace) => {
+      chrome.storage.onChanged.addListener(changes => {
         const prChange = changes["pullrequests"];
         if (prChange) {
           this.prs = prChange.newValue;
@@ -79,16 +86,16 @@ export class PRMonitorApp extends LitElement {
   }
 
   onSettingsChange(event) {
-    this.accountName = event.detail.accountName;
-    this.projectName = event.detail.projectName;
-    this.showSettings = this.accountName === "" || this.projectName === "";
+    this.settings = event.detail;
+    this.showSettings = event.detail.accountName === "";
     this.requestUpdate();
     if (chrome && chrome.storage) {
       chrome.storage.local.set(
         {
           settings: {
             accountName: event.detail.accountName,
-            projectPath: event.detail.projectName
+            projectRegex: event.detail.projectRegex || ".*",
+            repoRegex: event.detail.repoRegex || ".*"
           }
         },
         () => {
@@ -101,12 +108,11 @@ export class PRMonitorApp extends LitElement {
   render() {
     const subtitle = this.showSettings
       ? `Edit settings`
-      : this.projectName !== ""
-      ? `Currently displaying PRs in ${this.projectName}`
-      : `Project not set`;
+      : this.settings.accountName !== ""
+      ? `Currently displaying PRs in ${this.settings.accountName}`
+      : `Account not set`;
     const settingsButtonLabel = this.showSettings ? `CANCEL` : `SETTINGS`;
-    const settingsConfigured =
-      this.accountName !== "" && this.projectName !== "";
+    const settingsConfigured = this.settings.accountName !== "";
     return html`
       <div class="App">
         <header class="App-header">
@@ -127,8 +133,7 @@ export class PRMonitorApp extends LitElement {
           ${this.showSettings
             ? html`
                 <x-settings-panel
-                  .accountName=${this.accountName}
-                  .projectName=${this.projectName}
+                  .settings=${this.settings}
                   @save=${this.onSettingsChange}
                 ></x-settings-panel>
               `
@@ -139,7 +144,10 @@ export class PRMonitorApp extends LitElement {
                     ${this.prs.map(
                       ({
                         pullRequestId,
-                        repository: { name: repositoryName },
+                        repository: {
+                          name: repositoryName,
+                          project: { name: projectName }
+                        },
                         title,
                         createdBy: {
                           displayName: createdByName,
@@ -157,8 +165,8 @@ export class PRMonitorApp extends LitElement {
                           .imageUrl=${createdByImageUrl}
                           .status=${status}
                           .creationDate=${creationDate}
-                          .accountName=${this.accountName}
-                          .projectPath=${this.projectName}
+                          .accountName=${this.settings.accountName}
+                          .projectPath=${projectName}
                           .reviewers=${reviewers}
                         ></x-pr-item>
                       `

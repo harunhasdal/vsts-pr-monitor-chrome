@@ -3,14 +3,16 @@ import { LitElement, html, css } from "lit-element";
 export class SettingsPanel extends LitElement {
   constructor() {
     super();
-    this.accountName = "";
-    this.projectName = "";
+    this.settings = {
+      accountName: "",
+      projectRegex: ".*",
+      repoRegex: ".*"
+    };
   }
 
   static get properties() {
     return {
-      accountName: { type: String },
-      projectName: { type: String }
+      settings: { type: Object }
     };
   }
 
@@ -22,13 +24,13 @@ export class SettingsPanel extends LitElement {
       }
 
       .settings-panel-input-container {
-        padding: 20px;
-        margin-bottom: 10px;
+        padding: 10px;
         display: flex;
+        flex-direction: column;
       }
 
       .settings-panel-input-container > label {
-        min-width: 190px;
+        margin-bottom: 5px;
       }
 
       .settings-panel-controls {
@@ -36,8 +38,13 @@ export class SettingsPanel extends LitElement {
         flex-direction: row-reverse;
       }
 
-      .settings-panel-controls > button {
-        min-width: 120px;
+      .settings-panel-controls > input {
+        margin-right: 10px;
+        margin-left: 10px;
+      }
+
+      textarea {
+        min-height: 40px;
       }
     `;
   }
@@ -54,7 +61,7 @@ export class SettingsPanel extends LitElement {
               id="azure-devops-account-input"
               type="text"
               name="project"
-              .value=${this.accountName}
+              .value=${this.settings.accountName}
               @change=${this.handleAccountChange}
               required
               minlength="3"
@@ -62,39 +69,55 @@ export class SettingsPanel extends LitElement {
           </div>
           <div class="settings-panel-input-container">
             <label for="azure-devops-project-input">
-              Azure DevOps Project:
+              Project selector (regular expression):
             </label>
             <input
               id="azure-devops-project-input"
               type="text"
-              name="project"
-              .value=${this.projectName}
-              @change=${this.handleProjectChange}
-              required
-              minlength="3"
+              name="projectRegex"
+              .value=${this.settings.projectRegex}
+              @change=${this.handleProjectRegexChange}
+              minlength="2"
             />
           </div>
+          <div class="settings-panel-input-container">
+            <label for="azure-devops-repo-input">
+              Repository Selector (regular expression):
+            </label>
+            <textarea
+              id="azure-devops-repo-input"
+              name="repoRegex"
+              .value=${this.settings.repoRegex}
+              @change=${this.handleRepoRegexChange}
+              minlength="2"
+            ></textarea>
+          </div>
           <div class="settings-panel-controls">
-            <button @click=${this.handleSave}>Save</button>
+            <input type="submit" @click=${this.handleSave} value="Save"></input>
           </div>
         </form>
       </div>
     `;
   }
   handleAccountChange(event) {
-    this.accountName = event.target.value;
+    this.settings.accountName = event.target.value;
   }
-  handleProjectChange(event) {
-    this.projectName = event.target.value;
+  handleProjectRegexChange(event) {
+    this.settings.projectRegex = event.target.value;
+  }
+  handleRepoRegexChange(event) {
+    this.settings.repoRegex = event.target.value;
   }
 
-  handleSave() {
+  handleSave(e) {
+    e.preventDefault();
     const event = new CustomEvent("save", {
       bubbles: true,
       composed: true,
       detail: {
-        accountName: this.accountName,
-        projectName: this.projectName
+        accountName: this.settings.accountName,
+        projectRegex: this.settings.projectRegex || ".*",
+        repoRegex: this.settings.repoRegex || ".*"
       }
     });
     this.dispatchEvent(event);
