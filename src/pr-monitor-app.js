@@ -70,24 +70,6 @@ export class PRMonitorApp extends LitElement {
           this.requestUpdate();
         }
       });
-    } else {
-      // Local dev setup
-      this.accountName = "slb-swt";
-      this.projectName = "Cybertron";
-      this.showSettings = false;
-      const url = `/sample.json`;
-      console.log("PR Monitor fetching from ", url);
-      fetch(url, {
-        credentials: "include",
-        redirect: "follow"
-      })
-        .then(r => r.json())
-        .then(d => {
-          this.prs = d.value;
-          console.log(this.prs);
-          this.requestUpdate();
-        })
-        .catch(e => console.log(e));
     }
   }
 
