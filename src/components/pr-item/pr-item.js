@@ -7,7 +7,11 @@ const rtf = new Intl.RelativeTimeFormat("en", {
 });
 
 const formatTimeSince = milliseconds => {
-  const hrs = milliseconds / 1000 / 60 / 60;
+  const minutes = milliseconds / 1000 / 60;
+  if (Math.abs(minutes) < 60) {
+    return rtf.format(minutes.toFixed(), "minute");
+  }
+  const hrs = minutes / 60;
   if (Math.abs(hrs) < 24) {
     return rtf.format(hrs.toFixed(), "hour");
   }
