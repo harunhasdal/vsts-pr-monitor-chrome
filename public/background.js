@@ -30,6 +30,7 @@ chrome.storage.onChanged.addListener(changes => {
   }
 });
 
+// https://docs.microsoft.com/en-us/rest/api/azure/devops/git/pull%20requests/get%20pull%20requests?view=azure-devops-rest-5.0#gitpullrequest
 const fetchData = settings => {
   const url = `https://dev.azure.com/${settings.subdomain}/${
     settings.projectPath
@@ -41,11 +42,13 @@ const fetchData = settings => {
   })
     .then(r => r.json())
     .then(d => {
-      chrome.storage.local.set({ pullrequests: d.value }, () => {
+      /** @type {Array.<{codeReviewId: number, createdBy: {displayName: string, imageURL: string}, creationDate: string, description: string, isDraft: boolean, mergeStatus?: string, pullRequestId: number, repository: {name: string, project: {name: string}}, reviewers: Array.<{displayName: string, imageUrl: string, vote:number}>, status: string, title: string, lastMergeCommit?: {url: string} }>} */
+      const prs = d.value;
+      chrome.storage.local.set({ pullrequests: prs }, () => {
         console.log("Pull requests saved to storage");
       });
       chrome.browserAction.setBadgeText({
-        text: String(d.value.length)
+        text: String(prs.length)
       });
     })
     .catch(e => console.log(e));

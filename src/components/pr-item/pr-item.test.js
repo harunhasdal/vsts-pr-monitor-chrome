@@ -21,7 +21,7 @@ it("renders a link to the PR", () => {
     title: "Test Title 1"
   };
   const testProps = {
-    subdomain: "testOrg",
+    accountName: "testOrg",
     projectPath: "testProject",
     pullRequestId: 111,
     status: "active",
@@ -35,7 +35,7 @@ it("renders a link to the PR", () => {
   const linkItem = wrapper.find(".pr-item-link");
   expect(linkItem.exists()).toBe(true);
   expect(linkItem.get(0).props.href).toBe(
-    `https://dev.azure.com/${testProps.subdomain}/${
+    `https://dev.azure.com/${testProps.accountName}/${
       testProps.projectPath
     }/_git/${testProps.repositoryName}/pullrequest/${
       testProps.pullRequestId
