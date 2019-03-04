@@ -8,6 +8,8 @@ export class SettingsPanel extends LitElement {
       projectRegex: ".*",
       repoRegex: ".*"
     };
+    this.showMatchedRepos = false;
+    this.matchedRepos = [];
   }
 
   static get properties() {
@@ -45,6 +47,16 @@ export class SettingsPanel extends LitElement {
 
       textarea {
         min-height: 40px;
+      }
+
+      .matched-repos-container {
+        padding: 0 10px;
+      }
+
+      .matched-repos {
+        border: 1px solid gray;
+        height: 200px;
+        overflow: auto;
       }
     `;
   }
@@ -94,19 +106,53 @@ export class SettingsPanel extends LitElement {
           </div>
           <div class="settings-panel-controls">
             <input type="submit" @click=${this.handleSave} value="Save"></input>
+            <button @click=${this.testFilters}>Test Filters</button>
           </div>
         </form>
+        ${
+          this.showMatchedRepos
+            ? html`
+                <div class="matched-repos-container">
+                  ${this.matchedRepos.length === 0
+                    ? html`
+                        No matches
+                      `
+                    : html`
+                        <div>
+                          Matched ${this.matchedRepos.length} repositories.
+                        </div>
+                        <ol class="matched-repos">
+                          ${this.matchedRepos.map(
+                            r =>
+                              html`
+                                <li>${r.name} in ${r.project.name}</li>
+                              `
+                          )}
+                        </ol>
+                      `}
+                </div>
+              `
+            : html`
+                <br />
+              `
+        }
       </div>
     `;
   }
   handleAccountChange(event) {
     this.settings.accountName = event.target.value;
+    this.showMatchedRepos = false;
+    this.requestUpdate();
   }
   handleProjectRegexChange(event) {
     this.settings.projectRegex = event.target.value;
+    this.showMatchedRepos = false;
+    this.requestUpdate();
   }
   handleRepoRegexChange(event) {
     this.settings.repoRegex = event.target.value;
+    this.showMatchedRepos = false;
+    this.requestUpdate();
   }
 
   handleSave(e) {
@@ -121,6 +167,23 @@ export class SettingsPanel extends LitElement {
       }
     });
     this.dispatchEvent(event);
+  }
+
+  testFilters(e) {
+    e.preventDefault();
+    if (chrome.storage) {
+      chrome.storage.local.get(["repos"], result => {
+        if (result.repos) {
+          const projectRegex = new RegExp(this.settings.projectRegex);
+          const repoRegex = new RegExp(this.settings.repoRegex);
+          this.matchedRepos = result.repos
+            .filter(r => projectRegex.test(r.project.name))
+            .filter(r => repoRegex.test(r.name));
+          this.showMatchedRepos = true;
+          this.requestUpdate();
+        }
+      });
+    }
   }
 }
 

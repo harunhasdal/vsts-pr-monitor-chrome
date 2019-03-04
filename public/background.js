@@ -70,4 +70,26 @@ const fetchData = settings => {
       });
     })
     .catch(e => console.log(e));
+
+  fetch(
+    `https://dev.azure.com/${
+      settings.accountName
+    }/_apis/git/repositories?api-version=4.1`,
+    {
+      credentials: "include",
+      redirect: "follow"
+    }
+  )
+    .then(r => r.json())
+    .then(d => {
+      if (!(d.value instanceof Array)) {
+        return;
+      }
+      /** @type {Array.<{codeReviewId: number, createdBy: {displayName: string, imageURL: string}, creationDate: string, description: string, isDraft: boolean, mergeStatus?: string, pullRequestId: number, repository: {name: string, project: {name: string}}, reviewers: Array.<{displayName: string, imageUrl: string, vote:number}>, status: string, title: string, lastMergeCommit?: {url: string} }>} */
+      const allrepos = d.value;
+      chrome.storage.local.set({ repos: allrepos }, () => {
+        console.log(`${allRepos.length} repos saved to storage`);
+      });
+    })
+    .catch(e => console.log(e));
 };
