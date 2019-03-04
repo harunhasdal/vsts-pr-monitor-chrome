@@ -2,12 +2,13 @@
 import { LitElement, html, css } from "lit-element";
 
 import "./components/pr-item/pr-item.js";
-import "./components/pr-list/pr-list.js";
 import "./components/settings/settings-panel.js";
 
 export class PRMonitorApp extends LitElement {
   constructor() {
     super();
+    // https://docs.microsoft.com/en-us/rest/api/azure/devops/git/pull%20requests/get%20pull%20requests?view=azure-devops-rest-5.0#gitpullrequest
+    /** @type {Array.<{codeReviewId: number, createdBy: {displayName: string, imageURL: string}, creationDate: string, description: string, isDraft: boolean, mergeStatus?: string, pullRequestId: number, repository: {name: string, project: {name: string}}, reviewers: Array.<{displayName: string, imageUrl: string, vote:number}>, status: string, title: string, lastMergeCommit?: {url: string} }>} */
     this.prs = [];
     this.accountName = "";
     this.projectName = "";
@@ -54,7 +55,7 @@ export class PRMonitorApp extends LitElement {
     if (chrome && chrome.storage) {
       chrome.storage.local.get(["pullrequests", "settings"], result => {
         if (result.settings) {
-          this.accountName = result.settings.subdomain;
+          this.accountName = result.settings.accountName;
           this.projectName = result.settings.projectPath;
         }
         if (result.pullrequests) {
@@ -69,6 +70,24 @@ export class PRMonitorApp extends LitElement {
           this.requestUpdate();
         }
       });
+    } else {
+      // Local dev setup
+      this.accountName = "slb-swt";
+      this.projectName = "Cybertron";
+      this.showSettings = false;
+      const url = `/sample.json`;
+      console.log("PR Monitor fetching from ", url);
+      fetch(url, {
+        credentials: "include",
+        redirect: "follow"
+      })
+        .then(r => r.json())
+        .then(d => {
+          this.prs = d.value;
+          console.log(this.prs);
+          this.requestUpdate();
+        })
+        .catch(e => console.log(e));
     }
   }
 
@@ -86,7 +105,7 @@ export class PRMonitorApp extends LitElement {
       chrome.storage.local.set(
         {
           settings: {
-            subdomain: event.detail.accountName,
+            accountName: event.detail.accountName,
             projectPath: event.detail.projectName
           }
         },
@@ -133,11 +152,35 @@ export class PRMonitorApp extends LitElement {
               `
             : settingsConfigured
             ? html`
-                <x-pr-list
-                  .prs=${this.prs}
-                  .subdomain=${this.accountName}
-                  .projectPath=${this.projectName}
-                ></x-pr-list>
+                <div class="pr-list">
+                  ${this.prs.map(
+                    ({
+                      pullRequestId,
+                      repository: { name: repositoryName },
+                      title,
+                      createdBy: {
+                        displayName: createdByName,
+                        imageUrl: createdByImageUrl
+                      },
+                      status,
+                      creationDate,
+                      reviewers
+                    }) => html`
+                      <x-pr-item
+                        .pullRequestId=${pullRequestId}
+                        .repositoryName=${repositoryName}
+                        .title=${title}
+                        .createdBy=${createdByName}
+                        .imageUrl=${createdByImageUrl}
+                        .status=${status}
+                        .creationDate=${creationDate}
+                        .accountName=${this.accountName}
+                        .projectPath=${this.projectName}
+                        .reviewers=${reviewers}
+                      ></x-pr-item>
+                    `
+                  )}
+                </div>
               `
             : html`
                 <div class="App-no-settings">

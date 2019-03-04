@@ -18,21 +18,30 @@ const formatTimeSince = milliseconds => {
 export class PRItem extends LitElement {
   static get properties() {
     return {
-      subdomain: { type: String },
+      accountName: { type: String },
       projectPath: { type: String },
       pullRequestId: { type: String },
       repositoryName: { type: String },
       createdBy: { type: String },
+      imageUrl: { type: String },
       creationDate: { type: String },
-      title: { type: String }
+      title: { type: String },
+      reviewers: { type: Array }
     };
   }
 
   static get styles() {
     return css`
-      .pr-item {
-        margin-bottom: 10px;
-        padding: 5px;
+      :host > .pr-item {
+        padding: 10px;
+        border-top: 1px solid gray;
+        display: grid;
+        grid-template-columns: 50px 1fr 66px;
+        grid-gap: 5px;
+      }
+
+      :host(:first-of-type) > .pr-item {
+        border-top: none;
       }
 
       .pr-item-link {
@@ -41,6 +50,10 @@ export class PRItem extends LitElement {
       }
 
       .pr-item-link:hover {
+        cursor: pointer;
+      }
+
+      .pr-item-link:hover .pr-item-title {
         text-decoration: underline;
       }
 
@@ -57,6 +70,28 @@ export class PRItem extends LitElement {
       .pr-item-metadata {
         font-size: 0.7rem;
       }
+
+      .avatar-container {
+        margin-right: 10px;
+      }
+
+      .stats-container img {
+        width: 18px;
+        height: 18px;
+      }
+
+      .reviewer-container {
+        position: relative;
+        min-width: 25px;
+      }
+      .review-status {
+        position: absolute;
+        font-size: 8px;
+        right: 0px;
+        bottom: 0px;
+        line-height: 8px;
+        z-index: 1;
+      }
     `;
   }
 
@@ -65,13 +100,17 @@ export class PRItem extends LitElement {
       new Date(this.creationDate) - Date.now()
     );
 
-    const link = `https://dev.azure.com/${this.subdomain}/${
+    const link = `https://dev.azure.com/${this.accountName}/${
       this.projectPath
     }/_git/${this.repositoryName}/pullrequest/${
       this.pullRequestId
     }?_a=overview`;
     return html`
       <div class="pr-item">
+        <div class="avatar-container">
+          <img .src=${this.imageUrl} />
+        </div>
+
         <a class="pr-item-link" target="_blank" href=${link}>
           <div class="pr-item-link-body">
             <div class="pr-item-title">
@@ -83,6 +122,24 @@ export class PRItem extends LitElement {
             </div>
           </div>
         </a>
+        <div class="stats-container">
+          ${this.reviewers
+            .filter(r => r.vote !== 0)
+            .map(
+              reviewer =>
+                html`
+                  <span
+                    class="reviewer-container"
+                    title="${reviewer.displayName}"
+                  >
+                    <img .src=${reviewer.imageUrl} />
+                    <span class="review-status"
+                      >${reviewer.vote > 0 ? "✅" : "⏱"}</span
+                    >
+                  </span>
+                `
+            )}
+        </div>
       </div>
     `;
   }
