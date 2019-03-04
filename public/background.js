@@ -32,7 +32,7 @@ chrome.storage.onChanged.addListener(changes => {
 
 // https://docs.microsoft.com/en-us/rest/api/azure/devops/git/pull%20requests/get%20pull%20requests?view=azure-devops-rest-5.0#gitpullrequest
 const fetchData = settings => {
-  const url = `https://dev.azure.com/${settings.subdomain}/${
+  const url = `https://dev.azure.com/${settings.accountName}/${
     settings.projectPath
   }/_apis/git/pullrequests?api-version=4.1`;
   console.log("PR Monitor fetching from ", url);
