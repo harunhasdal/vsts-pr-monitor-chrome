@@ -133,37 +133,45 @@ export class PRMonitorApp extends LitElement {
                 ></x-settings-panel>
               `
             : settingsConfigured
-            ? html`
-                <div class="pr-list">
-                  ${this.prs.map(
-                    ({
-                      pullRequestId,
-                      repository: { name: repositoryName },
-                      title,
-                      createdBy: {
-                        displayName: createdByName,
-                        imageUrl: createdByImageUrl
-                      },
-                      status,
-                      creationDate,
-                      reviewers
-                    }) => html`
-                      <x-pr-item
-                        .pullRequestId=${pullRequestId}
-                        .repositoryName=${repositoryName}
-                        .title=${title}
-                        .createdBy=${createdByName}
-                        .imageUrl=${createdByImageUrl}
-                        .status=${status}
-                        .creationDate=${creationDate}
-                        .accountName=${this.accountName}
-                        .projectPath=${this.projectName}
-                        .reviewers=${reviewers}
-                      ></x-pr-item>
-                    `
-                  )}
-                </div>
-              `
+            ? this.prs.length > 0
+              ? html`
+                  <div class="pr-list">
+                    ${this.prs.map(
+                      ({
+                        pullRequestId,
+                        repository: { name: repositoryName },
+                        title,
+                        createdBy: {
+                          displayName: createdByName,
+                          imageUrl: createdByImageUrl
+                        },
+                        status,
+                        creationDate,
+                        reviewers
+                      }) => html`
+                        <x-pr-item
+                          .pullRequestId=${pullRequestId}
+                          .repositoryName=${repositoryName}
+                          .title=${title}
+                          .createdBy=${createdByName}
+                          .imageUrl=${createdByImageUrl}
+                          .status=${status}
+                          .creationDate=${creationDate}
+                          .accountName=${this.accountName}
+                          .projectPath=${this.projectName}
+                          .reviewers=${reviewers}
+                        ></x-pr-item>
+                      `
+                    )}
+                  </div>
+                `
+              : html`
+                  <div class="App-no-settings">
+                    <p>
+                      No active PRs found.
+                    </p>
+                  </div>
+                `
             : html`
                 <div class="App-no-settings">
                   <p>
