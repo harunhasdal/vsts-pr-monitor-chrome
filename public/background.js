@@ -86,8 +86,8 @@ const fetchData = settings => {
         return;
       }
       /** @type {Array.<{codeReviewId: number, createdBy: {displayName: string, imageURL: string}, creationDate: string, description: string, isDraft: boolean, mergeStatus?: string, pullRequestId: number, repository: {name: string, project: {name: string}}, reviewers: Array.<{displayName: string, imageUrl: string, vote:number}>, status: string, title: string, lastMergeCommit?: {url: string} }>} */
-      const allrepos = d.value;
-      chrome.storage.local.set({ repos: allrepos }, () => {
+      const allRepos = d.value;
+      chrome.storage.local.set({ repos: allRepos }, () => {
         console.log(`${allRepos.length} repos saved to storage`);
       });
     })
