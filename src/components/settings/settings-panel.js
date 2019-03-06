@@ -12,6 +12,13 @@ export class SettingsPanel extends LitElement {
     this.matchedRepos = [];
   }
 
+  firstUpdated() {
+    chrome.storage.local.get(["repos"], result => {
+      this.allRepos = result.repos;
+      this.requestUpdate();
+    });
+  }
+
   static get properties() {
     return {
       settings: { type: Object }
@@ -67,7 +74,7 @@ export class SettingsPanel extends LitElement {
         <form>
           <div class="settings-panel-input-container">
             <label for="azure-devops-account-input">
-              Azure DevOps Account:
+              Azure DevOps Account (account in dev.azure.com/&gt;account&gt;/):
             </label>
             <input
               id="azure-devops-account-input"
@@ -105,8 +112,11 @@ export class SettingsPanel extends LitElement {
             ></textarea>
           </div>
           <div class="settings-panel-controls">
-            <input type="submit" @click=${this.handleSave} value="Save"></input>
-            <button @click=${this.testFilters}>Test Filters</button>
+            <input type="submit" @click=${
+              this.handleSave
+            } value="Save" ?disabled=${!this.settings.accountName}></input>
+            <button @click=${this.testFilters} ?disabled=${!this.allRepos ||
+      !this.settings.accountName}>Test Filters</button>
           </div>
         </form>
         ${
@@ -173,10 +183,11 @@ export class SettingsPanel extends LitElement {
     e.preventDefault();
     if (chrome.storage) {
       chrome.storage.local.get(["repos"], result => {
-        if (result.repos) {
+        this.allRepos = result.repos;
+        if (this.allRepos) {
           const projectRegex = new RegExp(this.settings.projectRegex);
           const repoRegex = new RegExp(this.settings.repoRegex);
-          this.matchedRepos = result.repos
+          this.matchedRepos = this.allRepos
             .filter(r => projectRegex.test(r.project.name))
             .filter(r => repoRegex.test(r.name));
           this.showMatchedRepos = true;
